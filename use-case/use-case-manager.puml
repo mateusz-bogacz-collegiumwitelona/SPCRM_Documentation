@@ -1,0 +1,23 @@
+@startuml
+left to right direction
+actor "Kierownik ds. Handlu" as K
+
+rectangle "Panel Kierowniczy" {
+    usecase "Przeglądanie Listy Pracowników" as UC_ViewEmployees
+    usecase "Podgląd Podsumowania Pracownika" as UC_EmployeeSummary
+    usecase "Analiza skuteczności (transakcje zakończone)" as UC_AnalyzeSuccess
+    usecase "Filtrowanie wyników po dacie" as UC_FilterResults
+}
+
+K --> UC_ViewEmployees
+UC_ViewEmployees <.. UC_EmployeeSummary : <<extend>>
+UC_EmployeeSummary ..> UC_AnalyzeSuccess : <<include>>
+UC_EmployeeSummary <.. UC_FilterResults : <<extend>>
+
+note bottom of UC_EmployeeSummary
+  Podsumowanie zawiera listę transakcji
+  oraz statystyki skuteczności
+  danego handlowca.
+end note
+
+@enduml

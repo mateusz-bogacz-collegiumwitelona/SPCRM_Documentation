@@ -1,0 +1,81 @@
+@startuml
+left to right direction
+actor Handlowiec as H
+
+rectangle "Moduł Dashboard i Kalendarz" {
+    usecase "Przeglądanie Kalendarza (Wyjazdy/Spotkania)" as UC_ViewCalendar
+    usecase "Podgląd szczegółów spotkania" as UC_MeetingDetails
+    usecase "Podgląd notatek powiązanych ze spotkaniem" as UC_MeetingNotes
+}
+
+rectangle "Moduł Profilu Klienta (CRM)" {
+    usecase "Przeglądanie Profilu Klienta" as UC_ViewClient
+    usecase "Weryfikacja opiekuna klienta" as UC_ViewOwner
+    usecase "Podgląd mapy dojazdu i nawigacja" as UC_Navigate
+    usecase "Podgląd listy kontaktów w firmie" as UC_ViewContacts
+    usecase "Podgląd sumarycznego zadłużenia (różne waluty)" as UC_ViewDebt
+    
+    usecase "Zarządzanie Notatkami Klienta" as UC_ManageNotes
+    usecase "Dodanie nowej notatki" as UC_AddNote
+    usecase "Edycja własnej notatki" as UC_EditNote
+}
+
+rectangle "Moduł Transakcji i Magazynu" {
+    usecase "Przeglądanie Listy Transakcji Klienta" as UC_ViewDeals
+    usecase "Filtrowanie i sortowanie transakcji" as UC_FilterDeals
+    usecase "Wizualizacja statusu płatności (kolory)" as UC_PaymentStatus
+    
+    usecase "Dodanie Nowej Transakcji (Oferty)" as UC_AddDeal
+    usecase "Wybór produktów i edycja cen (promocje)" as UC_SelectProducts
+    
+    usecase "Zmiana Statusu Transakcji" as UC_ChangeDealStatus
+    usecase "Zmiana na 'W trakcie' (InProgress)" as UC_StatusInProgress
+    usecase "Automatyczna aktualizacja stanu magazynowego" as UC_UpdateStock
+}
+
+rectangle "Moduł Mailingowy" {
+    usecase "Wysyłka masowego mailingu ofertowego" as UC_MassMailing
+    usecase "Wybór wielu klientów" as UC_SelectClientsMail
+    usecase "Wybór produktów i cen do maila" as UC_SelectProductsMail
+    usecase "Wybór języka (PL/ENG)" as UC_SelectLang
+}
+
+' Relacje Dashboard
+H --> UC_ViewCalendar
+UC_ViewCalendar <.. UC_MeetingDetails : <<extend>>
+UC_MeetingDetails <.. UC_MeetingNotes : <<extend>>
+
+' Relacje Profil Klienta
+H --> UC_ViewClient
+UC_ViewClient ..> UC_ViewOwner : <<include>>
+UC_ViewClient <.. UC_Navigate : <<extend>>
+UC_ViewClient <.. UC_ViewContacts : <<extend>>
+UC_ViewClient <.. UC_ViewDebt : <<extend>>
+H --> UC_ManageNotes
+UC_ManageNotes <|-- UC_AddNote
+UC_ManageNotes <|-- UC_EditNote
+
+' Relacje Transakcje
+H --> UC_ViewDeals
+UC_ViewDeals <.. UC_FilterDeals : <<extend>>
+UC_ViewDeals ..> UC_PaymentStatus : <<include>>
+H --> UC_AddDeal
+UC_AddDeal ..> UC_SelectProducts : <<include>>
+
+H --> UC_ChangeDealStatus
+UC_ChangeDealStatus <|-- UC_StatusInProgress : generalizacja
+' KLUCZOWA RELACJA BIZNESOWA:
+UC_StatusInProgress ..> UC_UpdateStock : <<include>>
+note right of UC_UpdateStock
+  System automatycznie rezerwuje/odejmuje
+  towar ze stanu magazynowego w momencie
+  rozpoczęcia realizacji transakcji.
+end note
+
+' Relacje Mailing
+H --> UC_MassMailing
+UC_MassMailing ..> UC_SelectClientsMail : <<include>>
+UC_MassMailing ..> UC_SelectProductsMail : <<include>>
+UC_MassMailing ..> UC_SelectLang : <<include>>
+
+@enduml

@@ -1,0 +1,281 @@
+@startuml
+left to right direction
+skinparam linetype line
+skinparam nodesep 60
+skinparam ranksep 60
+
+skinparam note {
+    BackgroundColor LightYellow
+    BorderColor Black
+    FontSize 12
+    Padding 5
+}
+
+' Encje
+entity USERS {
+    +Id : Guid <<PK>>
+    --
+    Email : string
+    PasswordHash : string
+    Role : string
+    FirstName : string
+    LastName : string
+    CreatedAt : DateTime
+    UpdatedAt : DateTime <<nullable>>
+}
+
+entity COMPANIES {
+    +Id : Guid <<PK>>
+    --
+    Name : string
+    NIP : string
+    OwnerId : Guid <<FK>>
+    CreatedAt : DateTime
+    UpdatedAt : DateTime <<nullable>>
+    Token : string
+}
+
+entity COMPANY_ADDRESS {
+    +Id : Guid <<PK>>
+    --
+    Street : string
+    City : string
+    ZipCode : string
+    Latitude : double
+    Longitude : double
+    AddresTypeEnum : ENUM <<ENUM>>
+    CreatedAt : DateTime
+    UpdatedAt : DateTime <<nullable>>
+    CompanyId : Guid <<FK>>
+}
+
+entity AddressTypeEnum {
+    Headquarters
+    Branch
+    Billing
+    Shipping
+}
+
+entity CONTACTS {
+    +Id : Guid <<PK>>
+    --
+    FirstName : string
+    LastName : string
+    Token : string
+    CreatedAt : DateTime
+    UpdatedAt : DateTime <<nullable>>
+    CompanyId : Guid <<FK>>
+    OwnerId : Guid <<FK>> <<nullable>>
+}
+
+entity CONTACTS_DETAILS {
+    +Id : Guid <<PK>>
+    --
+    ContactId : Guid <<FK>> 
+    Type : string
+    Value : string 
+    IsPrimary : bool
+    CreatedAt : DateTime
+    UpdatedAt : DateTime <<nullable>>
+}
+
+entity DEALS {
+    +Id : Guid <<PK>>
+    --
+    Name : string
+    Value : long
+    CurrencyId : Guid <<FK>>
+    DealsStatusEnum : ENUM <<ENUM>>
+    CloseDate : DateTime
+    CompanyId : Guid <<FK>>
+    OwnerId : Guid <<FK>>
+    CreatedAt : DateTime
+    UpdatedAt : DateTime <<nullable>>
+}
+
+entity DealsStatusEnum {
+    ToDo
+    InProgress
+    Complete
+    Cancelled
+}
+
+entity CURRENCY {
+    +Id : Guid <<PK>>
+    --
+    Name : string
+    CreatedAt : DateTime
+    UpdatedAt : DateTime <<nullable>> 
+}
+
+entity TASKS {
+    +Id : Guid <<PK>>
+    --
+    Title : string
+    Description : string
+    DueAt : DateTime
+    AssignedToId : Guid <<FK>>
+    ContactId : Guid <<FK>>
+    DealId : Guid <<FK>>
+    Token : string
+    CreatedAt : DateTime
+    UpdatedAt : DateTime <<nullable>>
+    TaskStatusEnum : ENUM <<ENUM>>
+    TaskPriorityEnum : ENUM <<ENUM>>
+}
+
+entity TaskStatusEnum {
+    ToDo
+    InProgress
+    Complete
+    Break
+}
+
+entity TaskPriorityEnum {
+    Low
+    Medium
+    High
+}
+
+entity NOTES {
+    +Id : Guid <<PK>>
+    --
+    Content : string
+    AuthorId : Guid <<FK>>
+    ContactId : Guid <<FK>>
+    DealId : Guid <<FK>>
+    CreatedAt : DateTime
+    UpdatedAt : DateTime <<nullable>>
+}
+
+entity PRODUCT_CATEGORIES {
+    +Id : Guid <<PK>> 
+    --
+    Name : string
+    Description : string
+    CreatedAt : DateTime
+    UpdatedAt : DateTime <<nullable>>
+}
+
+entity PRODUCT_TYPES {
+    +Id : Guid <<PK>>
+    --
+    Name : string
+    Description : string
+    CategoryId : Guid <<FK>>
+    CreatedAt : DateTime
+    UpdatedAt : DateTime <<nullable>>
+}
+
+entity PRODUCTS {
+    +Id : Guid <<PK>>
+    --
+    Name : string
+    SteelGrade : string
+    Thickness : int
+    Width : int
+    Length : int
+    Diameter : int <<nullable>>
+    Weight : int
+    Unit : string
+    PricePerUnit : int
+    StockQuantity : int
+    ProductTypeId : Guid <<FK>>
+    CreatedAt : DateTime
+    UpdatedAt : DateTime <<nullable>>
+}
+
+entity DEAL_PRODUCTS {
+    +Id : Guid <<PK>>
+    --
+    DealId : Guid <<FK>>
+    ProductId : Guid <<FK>>
+    Quantity : int
+    UnitPrice : long
+    CreatedAt : DateTime
+    UpdatedAt : DateTime <<nullable>>
+}
+
+entity LEGEND #LightGreen {
+    Token : nie ujawniać Id w API
+    Latitude : szerokość geograficzna
+    Longitude : długość geograficzna
+}
+
+' Relacje
+USERS::Id ||--o{ CONTACTS::OwnerId : owns
+USERS::Id ||--o{ DEALS::OwnerId : manages
+USERS::Id ||--o{ TASKS::AssignedToId : assigned
+USERS::Id ||--o{ NOTES::AuthorId : writes
+USERS::Id ||--o{ COMPANIES::OwnerId : manages_company
+
+COMPANIES::Id ||--o{ CONTACTS::CompanyId : has
+COMPANIES::Id ||--o{ DEALS::CompanyId : has
+COMPANIES::Id ||--o{ COMPANY_ADDRESS::CompanyId : has
+CONTACTS::Id ||--o{ TASKS::ContactId : related
+
+CONTACTS::Id ||--o{ CONTACTS_DETAILS::ContactId : owns_details
+CONTACTS::Id ||--o{ NOTES::ContactId : has
+
+DEALS::Id ||--o{ TASKS::DealId : related
+DEALS::Id ||--o{ NOTES::DealId : has
+DEALS::CurrencyId }o--|| CURRENCY::Id : has
+DEALS::Id ||--o{ DEAL_PRODUCTS : includes
+DEALS::DealsStatusEnum -- DealsStatusEnum
+
+PRODUCT_CATEGORIES::Id ||--o{ PRODUCT_TYPES : contains
+PRODUCT_TYPES::Id ||--o{ PRODUCTS : defines
+PRODUCTS::Id ||--o{ DEAL_PRODUCTS : sold_in
+
+TASKS::TaskStatusEnum -- TaskStatusEnum
+TASKS::TaskPriorityEnum -- TaskPriorityEnum
+COMPANY_ADDRESS::AddresTypeEnum -- AddressTypeEnum
+
+' Notatki
+note top of DEALS
+    **Value**: wartość ze stałym mnożnikiem 10 000 (np. 1 PLN = 10000)
+end note
+
+note top of PRODUCT_CATEGORIES
+    **Name**: Nazwa kategorii produktów
+    np. Blachy i płaskowniki
+end note
+
+note top of PRODUCT_TYPES
+    **Name**: Nazwa typu
+    np. Blachy gorącowalcowane
+    
+    **Description**: Opis typu
+    np. Blachy walcowane na gorąco
+    o różnych grubościach i wymiarach
+end note
+
+note bottom of PRODUCTS
+    **Parametry produktu:**
+    • Name - Nazwa np. Blacha gorącowalcowana
+    • SteelGrade - Typ stali np. S235JR, S355J2H
+    • Thickness - Grubość w mm
+    • Width - Szerokość w mm
+    • Length - Długość w mm
+    • Diameter - Średnica w mm (jeśli dotyczy)
+    • Weight - Waga w kg
+    • Unit - Jednostka miary np. kg, m, szt.
+    • PricePerUnit - Cena za jednostkę w groszach
+    • StockQuantity - ilość w sztukach
+end note
+
+note bottom of DEAL_PRODUCTS
+    **Quantity**: Ilość w najmniejszej jednostce
+    (np. sztuk, kg, m)
+    
+    **UnitPrice**: Cena za jednostkę
+    miary ze stałym mnożnikiem 10 000 (np. 1 PLN = 10000)
+end note
+
+note right of CONTACTS_DETAILS 
+    **Type**: Typ kontaktu, np. "WorkEmail", "MobilePhone", "Fax"
+    **Value**: Wartość kontaktu, np. "jan@firma.pl" lub "+48 123 456 789"
+    **IsPrimary**: Flaga określająca główny kontakt
+end note
+
+@enduml

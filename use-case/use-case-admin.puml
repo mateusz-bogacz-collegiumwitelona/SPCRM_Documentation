@@ -1,0 +1,41 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+' Definicja Aktorów
+actor Handlowiec as H
+actor "Kierownik ds. Handlu" as K
+actor Administrator as A
+
+' Dziedziczenie uprawnień: Kierownik ma te same funkcje co Handlowiec + własne
+K -|> H
+
+rectangle "Panel Administracyjny" {
+    ' Grupowanie zadań administracyjnych
+    usecase "Zarządzanie Użytkownikami" as UC_ManageUsers
+    usecase "Dodawanie/Edycja Użytkownika" as UC_EditUser
+    usecase "Blokowanie/Usuwanie (Soft Delete) Użytkownika" as UC_BlockUser
+    usecase "Nadawanie Rol" as UC_Roles
+
+    usecase "Zarządzanie Bazą Produktów" as UC_ManageProducts
+    usecase "Dodawanie/Edycja Produktu" as UC_EditProduct
+    usecase "Usuwanie Produktu" as UC_DeleteProduct
+}
+
+' Relacje Administratora
+A --> UC_ManageUsers
+UC_ManageUsers <.. UC_EditUser : <<extend>>
+UC_ManageUsers <.. UC_BlockUser : <<extend>>
+UC_ManageUsers <.. UC_Roles : <<extend>>
+
+A --> UC_ManageProducts
+UC_ManageProducts <.. UC_EditProduct : <<extend>>
+UC_ManageProducts <.. UC_DeleteProduct : <<extend>>
+
+note right of K
+  Kierownik dziedziczy wszystkie
+  przypadki użycia przypisane
+  do Handlowca.
+end note
+
+@enduml

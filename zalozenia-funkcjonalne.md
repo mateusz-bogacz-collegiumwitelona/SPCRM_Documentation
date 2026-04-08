@@ -1,0 +1,74 @@
+- każdy
+  - może się zalogować
+  - może się wyglogować
+  - może zgłośić problemy technczne przez specialny formularz.
+
+- handlowiec
+  - dashboard:
+    - widzi kalendarz z nadchodzącymi wyjazdami, spotakniami
+      - może kliknąć by zobaczyć szczegóły
+      - może zobaczyć notatki do tego spotaknia
+      - może zobaczyć wszystkie notatki o tym kliencie
+        - może sortować notatki po tym dacie stworzenia i tym kto je stworzył
+  - lista klientów
+    - widzi listę klientów zawierającą nazwę, nip, date ostatniej transakcji i przyycisk żeby zobaczyć więcej
+    - może wyszukiwać po nazwie i nip
+    - może sortować po nazwie i dacie ostatniej transakcji
+  - profil klienta
+    - ma ozaznczenie że jest jego opiekumen
+    - jeżeli nie jest opiekunem to widzi kto nim jest
+    - widzi mapkę dojazdu
+    - ma przycisk do nawigacji
+    - widzi listę transakcji
+      - lista transakcji ma kwotę i walutę
+      - widzi stan transakcji (do przygotowania (ToDo), w trakcie (InProgress), przygotowane (Complete), przerwana (break))
+        - jeżeli transakcja jest w trakcie przygotowania to widać odejmuje się z zamłówione z listy produktów
+      - widzi piorytet transakcji
+      - lista transakcji ma kwotę do opłaty, jeżeli nie jest opłacone w pełni to wyśiwtla się to na czerwono, jeżeli w pełni to na zielono
+      - może sortować i wyszujiwać po polach
+    - widzi kwote zadłóżenia w zależności od waluty
+    - widzi kontaty danej fimry (handlowiec w siedzibie A, drektro ds. kupna)
+    - może dodawać transakcje (co sprzedaje, keidy, kwota)
+    - widzi najnowsze notaki
+      - może przejść do podstrony ze wszystkimi notatami
+      - może sortować notatki po tym dacie stworzenia i tym kto je stworzył
+      - może dodawać notatki
+      - jeżeli to jego notatka może ją edytować
+    - może dodać nową transkacjie
+      - wybiera jednego klienta
+      - wybiera produkt
+        - zostawia lub edytuje cene (promocje)
+      - z automatu staje status zmienia się na ToDo
+    - lista produktów
+      - widzi listę produktów (nazwa, ilość itp)
+    - ustawienia:
+      - ...
+    - mailing
+      - widzi listę klientów
+        - może wybrać od 1 do wielu klientów
+      - widzi listę dostępnych produktów
+        - może wybrać od 1 do wielu produktów
+        - na następnej stronie może dodać cene za ten produkt
+      - na następnej stronie wybiera język mailingu (PL/ENG)
+      - wysyła wiele maila z gotyowego template
+- admin
+  - widzi listę użytkowników
+    - może dodwać użytkownika
+    - może edytować użytkownika
+    - może blokować użytkownika
+    - może odblokowywać użytkownika
+    - może usunąć użytkownika (soft delete)
+    - może nadawać nowe role
+  - widzi listę produktów
+    - może dodwać produkt
+    - może edytować produkt
+    - może usnąć produkt
+
+- kierownik
+  - widzi to samo co użytkownik
+  - lista pracowników
+    - widzi listę pracowników
+    - widzi podsumowanie w pracownika
+      - widzi listę transakci w pracownika
+      - widzi ile doszło do skutku
+      - może ograniczyć dane po dacie
