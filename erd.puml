@@ -221,15 +221,19 @@ DEALS::Id ||--o{ TASKS::DealId : related
 DEALS::Id ||--o{ NOTES::DealId : has
 DEALS::CurrencyId }o--|| CURRENCY::Id : has
 DEALS::Id ||--o{ DEAL_PRODUCTS : includes
-DEALS::DealsStatusEnum -- DealsStatusEnum
 
 PRODUCT_CATEGORIES::Id ||--o{ PRODUCT_TYPES : contains
+
 PRODUCT_TYPES::Id ||--o{ PRODUCTS : defines
+
 PRODUCTS::Id ||--o{ DEAL_PRODUCTS : sold_in
 
+COMPANY_ADDRESS::AddresTypeEnum -- AddressTypeEnum
+
+DEALS::DealsStatusEnum -- DealsStatusEnum
 TASKS::TaskStatusEnum -- TaskStatusEnum
 TASKS::TaskPriorityEnum -- TaskPriorityEnum
-COMPANY_ADDRESS::AddresTypeEnum -- AddressTypeEnum
+
 
 ' Notatki
 note top of DEALS
